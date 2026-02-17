@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+/* YTS.mx-Inspired Theme Configuration */
+@theme {
+  /* YTS.mx Color Palette */
+  --color-yts-green: #6AC045;
+  --color-yts-dark: #171717;
+  --color-yts-surface: #1f1f1f;
+  --color-yts-border: #2a2a2a;
+  --color-yts-text: #ffffff;
+  --color-yts-muted: #a0a0a0;
+
+  /* Semantic Colors */
+  --color-primary-500: var(--color-yts-green);
+  --color-primary-600: #5eb03a;
+  --color-primary-700: #52a034;
+
+  --color-dark-bg: var(--color-yts-dark);
+  --color-dark-surface: var(--color-yts-surface);
+  --color-dark-border: var(--color-yts-border);
+
+  /* CSS Variables for consumption */
+  --background: var(--color-yts-dark);
+  --foreground: var(--color-yts-text);
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
