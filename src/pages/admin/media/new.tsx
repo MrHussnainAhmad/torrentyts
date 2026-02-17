@@ -19,7 +19,7 @@ export default function AddCourse() {
         setValue,
         formState: { errors, isSubmitting },
     } = useForm<CourseFormData>({
-        resolver: zodResolver(courseSchema),
+        resolver: zodResolver(courseSchema) as any,
         defaultValues: {
             rating: 0,
             seeders: 0,
@@ -103,7 +103,7 @@ export default function AddCourse() {
 
                         <div className="space-y-2">
                             <Label htmlFor="year">Year</Label>
-                            <Input id="year" type="number" {...register('year')} />
+                            <Input id="year" type="number" {...register('year', { valueAsNumber: true })} />
                             <ErrorMessage>{errors.year?.message}</ErrorMessage>
                         </div>
 

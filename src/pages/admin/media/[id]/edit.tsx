@@ -23,7 +23,7 @@ export default function EditCourse() {
         reset,
         formState: { errors, isSubmitting },
     } = useForm<CourseFormData>({
-        resolver: zodResolver(courseSchema),
+        resolver: zodResolver(courseSchema) as any,
     });
 
     useEffect(() => {
@@ -120,7 +120,7 @@ export default function EditCourse() {
 
                         <div className="space-y-2">
                             <Label htmlFor="year">Year</Label>
-                            <Input id="year" type="number" {...register('year')} />
+                            <Input id="year" type="number" {...register('year', { valueAsNumber: true })} />
                             <ErrorMessage>{errors.year?.message}</ErrorMessage>
                         </div>
 
