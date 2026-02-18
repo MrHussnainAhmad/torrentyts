@@ -13,13 +13,18 @@ export default async function handler(
     switch (method) {
         case 'GET':
             try {
-                const { slug, page = '1', limit = '100', sortBy } = req.query;
+                const { slug, page = '1', limit = '100', sortBy, genre, year, quality } = req.query;
                 const pageNum = parseInt(page as string);
                 const limitNum = parseInt(limit as string);
                 const skip = (pageNum - 1) * limitNum;
 
+                const query: any = { status: 'published' };
+                if (genre) query.genre = genre;
+                if (year) query.year = parseInt(year as string);
+                if (quality) query.quality = quality;
+
                 if (slug) {
-                    const course = await Course.findOne({ slug });
+                    const course = await Course.findOne({ ...query, slug });
                     if (!course) {
                         return res.status(404).json({ success: false, error: 'Course not found' });
                     }
@@ -31,7 +36,6 @@ export default async function handler(
                     sortOptions = { year: -1, createdAt: -1 };
                 }
 
-                const query = { status: 'published' };
                 const totalItems = await Course.countDocuments(query);
                 const courses = await Course.find(query)
                     .sort(sortOptions)

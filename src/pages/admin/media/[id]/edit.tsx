@@ -102,7 +102,7 @@ export default function EditCourse() {
                         <ErrorMessage>{errors.description?.message}</ErrorMessage>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
                         <div className="space-y-2">
                             <Label htmlFor="quality">Quality</Label>
                             <select
@@ -122,6 +122,12 @@ export default function EditCourse() {
                             <Label htmlFor="year">Year</Label>
                             <Input id="year" type="number" {...register('year', { valueAsNumber: true })} />
                             <ErrorMessage>{errors.year?.message}</ErrorMessage>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="rating">Rating (0-10)</Label>
+                            <Input id="rating" type="number" step="0.1" {...register('rating', { valueAsNumber: true })} placeholder="0.0" />
+                            <ErrorMessage>{errors.rating?.message}</ErrorMessage>
                         </div>
 
                         <div className="space-y-2">
