@@ -6,8 +6,8 @@ interface SEOProps {
     description?: string;
     keywords?: string;
     image?: string;
-    canonical?: string;
-    schema?: any;
+    robots?: string;
+    themeColor?: string;
 }
 
 export default function SEO({
@@ -16,7 +16,9 @@ export default function SEO({
     keywords,
     image,
     canonical,
-    schema
+    schema,
+    robots = "index, follow",
+    themeColor = "#171717"
 }: SEOProps) {
     const router = useRouter();
     const siteName = "YTS"; // Matches updated branding
@@ -24,20 +26,24 @@ export default function SEO({
 
     const fullTitle = title ? `${title} - ${siteName}` : siteName;
     const metaDescription = description || defaultDescription;
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://torrentyts.vercel.app';
     const fullCanonical = canonical || `${siteUrl}${router.asPath === '/' ? '' : router.asPath.split('?')[0]}`;
     const metaImage = image || `${siteUrl}/favicon.ico`; // Fallback image
+    const metaKeywords = keywords || "legal movies, public domain, open content, educational torrents, free downloads";
 
     return (
         <Head>
             {/* Basic Meta Tags */}
             <title>{fullTitle}</title>
             <meta name="description" content={metaDescription} />
-            {keywords && <meta name="keywords" content={keywords} />}
+            <meta name="keywords" content={metaKeywords} />
+            <meta name="robots" content={robots} />
+            <meta name="theme-color" content={themeColor} />
             <link rel="canonical" href={fullCanonical} />
 
             {/* Open Graph / Facebook */}
             <meta property="og:type" content="website" />
+            <meta property="og:site_name" content={siteName} />
             <meta property="og:url" content={fullCanonical} />
             <meta property="og:title" content={fullTitle} />
             <meta property="og:description" content={metaDescription} />

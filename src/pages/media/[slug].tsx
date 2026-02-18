@@ -101,6 +101,7 @@ export default function CoursePage({ settings: initialSettings }: { settings: an
                                         src={course.thumbnail}
                                         alt={course.title}
                                         className="w-full rounded-lg shadow-2xl"
+                                        loading="lazy"
                                     />
                                 ) : (
                                     <div className="w-full aspect-[2/3] bg-[#1f1f1f] rounded-lg flex flex-col items-center justify-center text-gray-600 border border-white/5">
