@@ -7,6 +7,7 @@ export default function Document() {
         <link rel="manifest" href="/site.webmanifest" />
         <meta name="theme-color" content="#171717" />
         <meta name="google-site-verification" content="GxoWjVvXFK0dKlz7eskpWguKgf0w2kF1oSZyaVUjtBg" />
+        <meta name="msvalidate.01" content="756A0F56F0818B0996066BEB43326CBA" />
       </Head>
       <body className="antialiased">
         <Main />
