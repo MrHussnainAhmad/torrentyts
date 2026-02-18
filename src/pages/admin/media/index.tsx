@@ -9,8 +9,10 @@ import { useRouter } from 'next/router';
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function Courses() {
-    const { data, error, mutate } = useSWR('/api/courses', fetcher);
     const router = useRouter();
+    const page = Math.max(1, parseInt((router.query.page as string) || '1', 10));
+    const limit = 20;
+    const { data, error, mutate } = useSWR(`/api/courses?page=${page}&limit=${limit}`, fetcher);
     const [deleting, setDeleting] = useState<string | null>(null);
 
     if (error) return <div>Failed to load</div>;
@@ -38,6 +40,17 @@ export default function Courses() {
         }
     };
 
+    const pagination = data?.pagination || { totalPages: 1, currentPage: page };
+    const courses = data?.data || [];
+
+    const handlePageChange = (newPage: number) => {
+        if (newPage < 1 || newPage > pagination.totalPages) return;
+        router.push({
+            pathname: '/admin/media',
+            query: { ...router.query, page: newPage.toString() },
+        });
+    };
+
     return (
         <AdminLayout>
             <div className="space-y-6">
@@ -63,7 +76,7 @@ export default function Courses() {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-dark-border">
-                                {data.data.map((course: any) => (
+                                {courses.map((course: any) => (
                                     <tr key={course._id} className="hover:bg-dark-bg/50 transition-colors">
                                         <td className="p-4 font-medium text-white">
                                             <div className="flex items-center gap-3">
@@ -113,7 +126,7 @@ export default function Courses() {
                                         </td>
                                     </tr>
                                 ))}
-                                {data.data.length === 0 && (
+                                {courses.length === 0 && (
                                     <tr>
                                         <td colSpan={6} className="p-8 text-center text-slate-500">
                                             No media items found. Create one to get started.
@@ -124,6 +137,27 @@ export default function Courses() {
                         </table>
                     </div>
                 </div>
+                {pagination.totalPages > 1 && (
+                    <div className="flex items-center justify-center gap-4">
+                        <Button
+                            variant="outline"
+                            onClick={() => handlePageChange(page - 1)}
+                            disabled={page <= 1}
+                        >
+                            Previous
+                        </Button>
+                        <span className="text-sm text-slate-400">
+                            Page {page} of {pagination.totalPages}
+                        </span>
+                        <Button
+                            variant="outline"
+                            onClick={() => handlePageChange(page + 1)}
+                            disabled={page >= pagination.totalPages}
+                        >
+                            Next
+                        </Button>
+                    </div>
+                )}
             </div>
         </AdminLayout>
     );

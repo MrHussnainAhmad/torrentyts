@@ -75,7 +75,7 @@ export default function Home({ settings: initialSettings }: { settings: any }) {
       <main className="container mx-auto px-4 py-8">
         {/* Featured / Hero Section */}
         {featuredMovie && !searchQuery && (
-          <div className="relative mb-16 rounded-2xl overflow-hidden aspect-[21/9] min-h-[300px] group cursor-pointer border border-white/5 shadow-2xl"
+          <div className="relative mb-16 rounded-2xl overflow-hidden aspect-[4/3] sm:aspect-[16/9] lg:aspect-[21/9] min-h-[220px] sm:min-h-[260px] md:min-h-[320px] max-h-[70vh] group cursor-pointer border border-white/5 shadow-2xl"
             onClick={() => router.push(`/media/${featuredMovie.slug}`)}>
             {/* Background Image with Overlay */}
             <div
@@ -85,15 +85,15 @@ export default function Home({ settings: initialSettings }: { settings: any }) {
             <div className="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent" />
 
             {/* Content */}
-            <div className="relative h-full flex flex-col justify-center px-8 md:px-16 max-w-2xl gap-4">
+            <div className="relative h-full flex flex-col justify-center px-6 sm:px-8 md:px-16 max-w-xl sm:max-w-2xl gap-3 sm:gap-4">
               <div className="flex items-center gap-2">
                 <span className="bg-[#6AC045] text-black text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">Featured</span>
                 <span className="text-gray-300 text-sm font-medium">{featuredMovie.quality} • {featuredMovie.year}</span>
               </div>
-              <h1 className="text-3xl md:text-5xl font-black tracking-tight text-white drop-shadow-lg">
+              <h1 className="text-2xl sm:text-3xl md:text-5xl font-black tracking-tight text-white drop-shadow-lg">
                 {featuredMovie.title}
               </h1>
-              <p className="text-gray-300 text-sm md:text-base line-clamp-2 md:line-clamp-3 leading-relaxed max-w-lg mb-2"
+              <p className="text-gray-300 text-xs sm:text-sm md:text-base line-clamp-2 md:line-clamp-3 leading-relaxed max-w-lg mb-2"
                 dangerouslySetInnerHTML={{ __html: featuredMovie.description.substring(0, 200) + '...' }} />
 
               <div className="flex flex-wrap items-center gap-4 mt-2">
