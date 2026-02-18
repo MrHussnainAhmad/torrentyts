@@ -6,6 +6,8 @@ interface SEOProps {
     description?: string;
     keywords?: string;
     image?: string;
+    canonical?: string;
+    schema?: any;
     robots?: string;
     themeColor?: string;
 }
