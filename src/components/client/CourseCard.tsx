@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { Star, Film } from 'lucide-react';
 
 interface CourseCardProps {
@@ -19,20 +18,15 @@ interface CourseCardProps {
 }
 
 export default function CourseCard({ course }: CourseCardProps) {
-    // Transform TMDB image to original quality
-    const highQualityImage = course.thumbnail?.replace('/w500/', '/original/');
-
     return (
         <Link href={`/media/${course.slug}`} className="group block">
             <div className="relative aspect-[2/3] bg-[#1f1f1f] rounded-lg overflow-hidden border border-white/5 shadow-lg group-hover:border-[#6AC045]/50 transition-all duration-300">
                 {/* Poster Image */}
                 {course.thumbnail ? (
-                    <Image
-                        src={highQualityImage || course.thumbnail}
+                    <img
+                        src={course.thumbnail}
                         alt={course.title}
-                        fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-105 group-hover:opacity-30"
-                        sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 group-hover:opacity-30"
                     />
                 ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center bg-[#252525] text-gray-600">
