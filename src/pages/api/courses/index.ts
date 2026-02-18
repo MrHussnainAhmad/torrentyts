@@ -13,7 +13,10 @@ export default async function handler(
     switch (method) {
         case 'GET':
             try {
-                const { slug } = req.query;
+                const { slug, page = '1', limit = '100' } = req.query;
+                const pageNum = parseInt(page as string);
+                const limitNum = parseInt(limit as string);
+                const skip = (pageNum - 1) * limitNum;
 
                 if (slug) {
                     const course = await Course.findOne({ slug });
@@ -23,8 +26,22 @@ export default async function handler(
                     return res.status(200).json({ success: true, data: course });
                 }
 
-                const courses = await Course.find({}).sort({ createdAt: -1 });
-                res.status(200).json({ success: true, data: courses });
+                const totalItems = await Course.countDocuments({});
+                const courses = await Course.find({})
+                    .sort({ createdAt: -1 })
+                    .skip(skip)
+                    .limit(limitNum);
+
+                res.status(200).json({
+                    success: true,
+                    data: courses,
+                    pagination: {
+                        totalItems,
+                        totalPages: Math.ceil(totalItems / limitNum),
+                        currentPage: pageNum,
+                        limit: limitNum
+                    }
+                });
             } catch (error) {
                 res.status(400).json({ success: false, error: (error as Error).message });
             }

@@ -1,0 +1,122 @@
+import { useRouter } from 'next/router';
+import { useState, useEffect } from 'react';
+import useSWR from 'swr';
+import Navbar from '@/components/client/Navbar';
+import Footer from '@/components/client/Footer';
+import CourseCard from '@/components/client/CourseCard';
+import SEO from '@/components/client/SEO';
+
+import { getServerSettings } from '@/lib/server-settings';
+
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
+export async function getServerSideProps() {
+    const settings = await getServerSettings();
+    return {
+        props: {
+            settings,
+        },
+    };
+}
+
+export default function Browse({ settings: initialSettings }: { settings: any }) {
+    const router = useRouter();
+    const page = parseInt(router.query.page as string || '1');
+    const limit = 20;
+
+    const { data: settingsData } = useSWR('/api/settings', fetcher);
+    const { data, error } = useSWR(`/api/courses?page=${page}&limit=${limit}`, fetcher);
+    const [searchQuery, setSearchQuery] = useState('');
+
+    const settings = (settingsData?.success && settingsData.data) ? settingsData.data : (initialSettings || {
+        siteName: 'TorrentEdu',
+        siteDescription: 'Download high-quality educational courses via torrent.'
+    });
+
+    if (error) return <div className="min-h-screen bg-[#171717] flex items-center justify-center text-white">Failed to load media</div>;
+
+    const courses = data?.data || [];
+    const pagination = data?.pagination || { totalPages: 1 };
+
+    const handlePageChange = (newPage: number) => {
+        if (newPage < 1 || newPage > pagination.totalPages) return;
+        router.push({
+            pathname: '/browse',
+            query: { ...router.query, page: newPage },
+        });
+    };
+
+    return (
+        <div className="min-h-screen bg-[#171717] text-white">
+            <SEO
+                title={`Browse Media - Page ${page}`}
+                description={settings.siteDescription}
+                schema={{
+                    "@context": "https://schema.org",
+                    "@type": "WebSite",
+                    "name": settings.siteName,
+                    "url": (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000') + '/browse',
+                    "description": settings.siteDescription
+                }}
+            />
+
+            <Navbar onSearch={setSearchQuery} />
+
+            <main className="container mx-auto px-4 py-12">
+                {/* Header Section */}
+                <div className="mb-12 text-center max-w-4xl mx-auto">
+                    <h1 className="text-3xl md:text-4xl font-bold mb-4">Browse All <span className="text-[#6AC045]">Media</span></h1>
+                    <p className="text-gray-400 text-base leading-relaxed">
+                        Exploring our complete library of high-quality verified media torrents.
+                    </p>
+                </div>
+
+                {/* Course Grid */}
+                {!data ? (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+                        {Array.from({ length: 12 }).map((_, i) => (
+                            <div key={i} className="aspect-[2/3] bg-[#1f1f1f] rounded-lg animate-pulse" />
+                        ))}
+                    </div>
+                ) : courses.length > 0 ? (
+                    <>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+                            {courses.map((course: any) => (
+                                <CourseCard key={course._id} course={course} />
+                            ))}
+                        </div>
+
+                        {/* Pagination */}
+                        {pagination.totalPages > 1 && (
+                            <div className="mt-12 flex justify-center items-center space-x-4">
+                                <button
+                                    onClick={() => handlePageChange(page - 1)}
+                                    disabled={page <= 1}
+                                    className="px-4 py-2 bg-[#1f1f1f] border border-[#2a2a2a] rounded-lg text-sm font-medium hover:border-[#6AC045] disabled:opacity-50 disabled:hover:border-[#2a2a2a] transition-colors"
+                                >
+                                    Previous
+                                </button>
+                                <span className="text-gray-400 text-sm">
+                                    Page {page} of {pagination.totalPages}
+                                </span>
+                                <button
+                                    onClick={() => handlePageChange(page + 1)}
+                                    disabled={page >= pagination.totalPages}
+                                    className="px-4 py-2 bg-[#1f1f1f] border border-[#2a2a2a] rounded-lg text-sm font-medium hover:border-[#6AC045] disabled:opacity-50 disabled:hover:border-[#2a2a2a] transition-colors"
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        )}
+                    </>
+                ) : (
+                    <div className="flex flex-col items-center justify-center h-96 text-center">
+                        <p className="text-xl text-gray-400 mb-4">No media found</p>
+                    </div>
+                )}
+            </main>
+
+            <Footer />
+        </div>
+    );
+}

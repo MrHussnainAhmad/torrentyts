@@ -23,7 +23,7 @@ export async function getServerSideProps() {
 export default function Home({ settings: initialSettings }: { settings: any }) {
   const router = useRouter();
   const { data: settingsData } = useSWR('/api/settings', fetcher);
-  const { data, error } = useSWR('/api/courses', fetcher);
+  const { data, error } = useSWR('/api/courses?limit=15', fetcher);
   const [searchQuery, setSearchQuery] = useState('');
 
   const settings = (settingsData?.success && settingsData.data) ? settingsData.data : (initialSettings || {
