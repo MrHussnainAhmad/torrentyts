@@ -45,6 +45,9 @@ export default function Home({ settings: initialSettings }: { settings: any }) {
   const latestMovies = latestData?.data || [];
   const featuredMovie = featuredData?.data?.[0];
   const featuredImage = featuredMovie?.coverImage || featuredMovie?.thumbnail;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+  const baseKeywords = 'movies, torrent, yts, yts 2, stream, watch movies, hd movies, movie torrents';
+  const seoDescription = 'Watch movies, stream and download torrents in HD. Fast YTS-style listings with clean search and verified media.';
 
   const filteredCourses = courses.filter((course: any) => {
     const matchesSearch = course.title.toLowerCase().includes(searchQuery.toLowerCase());
@@ -59,14 +62,22 @@ export default function Home({ settings: initialSettings }: { settings: any }) {
         </Head>
       )}
       <SEO
-        title="Latest Media Torrents"
-        description={settings.siteDescription}
+        title="Watch Movies, Stream & Download Torrents"
+        description={seoDescription}
+        siteName={settings.siteName}
+        keywords={baseKeywords}
+        image={featuredImage}
         schema={{
           "@context": "https://schema.org",
           "@type": "WebSite",
           "name": settings.siteName,
-          "url": process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
-          "description": settings.siteDescription
+          "url": siteUrl,
+          "description": seoDescription,
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": `${siteUrl}/?q={search_term_string}`,
+            "query-input": "required name=search_term_string"
+          }
         }}
       />
 
@@ -78,10 +89,16 @@ export default function Home({ settings: initialSettings }: { settings: any }) {
           <div className="relative mb-16 rounded-2xl overflow-hidden aspect-[4/3] sm:aspect-[16/9] lg:aspect-[21/9] min-h-[220px] sm:min-h-[260px] md:min-h-[320px] max-h-[70vh] group cursor-pointer border border-white/5 shadow-2xl"
             onClick={() => router.push(`/media/${featuredMovie.slug}`)}>
             {/* Background Image with Overlay */}
-            <div
-              className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-              style={{ backgroundImage: `url(${featuredMovie.coverImage || featuredMovie.thumbnail})` }}
-            />
+            {featuredImage && (
+              <img
+                src={featuredImage}
+                alt={featuredMovie.title}
+                className="absolute inset-0 h-full w-full object-cover object-center sm:object-[60%_center] lg:object-[70%_center] transition-transform duration-700 group-hover:scale-105"
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
+              />
+            )}
             <div className="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent" />
 
             {/* Content */}

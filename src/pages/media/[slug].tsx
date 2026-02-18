@@ -51,20 +51,43 @@ export default function CoursePage({ settings: initialSettings }: { settings: an
         </div>
     );
 
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const stripHtml = (value: string) => value.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+    const metaDescription = stripHtml(course.description || '').slice(0, 160) || settings.siteDescription;
+    const keywordParts = [
+        course.title,
+        course.year?.toString(),
+        course.quality,
+        ...(course.genre || []),
+        'movies',
+        'torrent',
+        'yts',
+        'yts 2',
+        'stream',
+        'watch movies'
+    ].filter(Boolean);
+    const keywords = Array.from(new Set(keywordParts)).join(', ');
+    const metaImage = course.coverImage || course.thumbnail;
+
     return (
         <div className="min-h-screen bg-[#171717] text-white relative">
             <SEO
                 title={`${course.title} (${course.year})`}
-                description={course.description}
-                image={course.thumbnail}
+                description={metaDescription}
+                image={metaImage}
+                imageAlt={`${course.title} poster`}
+                siteName={settings.siteName}
+                keywords={keywords}
+                ogType="video.movie"
                 schema={{
                     "@context": "https://schema.org",
                     "@type": "Movie",
                     "name": course.title,
                     "alternativeHeadline": course.title,
-                    "image": course.thumbnail,
+                    "image": metaImage,
+                    "url": `${siteUrl}/media/${course.slug}`,
                     "datePublished": course.year.toString(),
-                    "description": course.description,
+                    "description": metaDescription,
                     "aggregateRating": {
                         "@type": "AggregateRating",
                         "ratingValue": course.rating.toString(),

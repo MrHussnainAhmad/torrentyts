@@ -6,10 +6,16 @@ interface SEOProps {
     description?: string;
     keywords?: string;
     image?: string;
+    imageAlt?: string;
     canonical?: string;
     schema?: any;
     robots?: string;
     themeColor?: string;
+    siteName?: string;
+    ogType?: string;
+    locale?: string;
+    twitterSite?: string;
+    twitterCreator?: string;
 }
 
 export default function SEO({
@@ -17,21 +23,28 @@ export default function SEO({
     description,
     keywords,
     image,
+    imageAlt,
     canonical,
     schema,
-    robots = "index, follow",
-    themeColor = "#171717"
+    robots = "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+    themeColor = "#171717",
+    siteName,
+    ogType = "website",
+    locale = "en_US",
+    twitterSite,
+    twitterCreator
 }: SEOProps) {
     const router = useRouter();
-    const siteName = "YTS"; // Matches updated branding
-    const defaultDescription = "High-quality content, free to download via torrent. Fast and clean.";
+    const resolvedSiteName = siteName || process.env.NEXT_PUBLIC_SITE_NAME || "YTS";
+    const defaultDescription = "Stream and download high-quality movies with fast, clean listings.";
 
-    const fullTitle = title ? `${title} - ${siteName}` : siteName;
+    const fullTitle = title ? `${title} - ${resolvedSiteName}` : resolvedSiteName;
     const metaDescription = description || defaultDescription;
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://torrentyts.vercel.app';
     const fullCanonical = canonical || `${siteUrl}${router.asPath === '/' ? '' : router.asPath.split('?')[0]}`;
     const metaImage = image || `${siteUrl}/favicon.ico`; // Fallback image
-    const metaKeywords = keywords || "legal movies, public domain, open content, educational torrents, free downloads";
+    const metaKeywords = keywords || "movies, torrent, yts, yts 2, stream, watch movies, hd movies, movie torrents";
+    const metaImageAlt = imageAlt || fullTitle;
 
     return (
         <Head>
@@ -44,12 +57,14 @@ export default function SEO({
             <link rel="canonical" href={fullCanonical} />
 
             {/* Open Graph / Facebook */}
-            <meta property="og:type" content="website" />
-            <meta property="og:site_name" content={siteName} />
+            <meta property="og:type" content={ogType} />
+            <meta property="og:site_name" content={resolvedSiteName} />
             <meta property="og:url" content={fullCanonical} />
             <meta property="og:title" content={fullTitle} />
             <meta property="og:description" content={metaDescription} />
             <meta property="og:image" content={metaImage} />
+            <meta property="og:image:alt" content={metaImageAlt} />
+            <meta property="og:locale" content={locale} />
 
             {/* Twitter */}
             <meta property="twitter:card" content="summary_large_image" />
@@ -57,6 +72,9 @@ export default function SEO({
             <meta property="twitter:title" content={fullTitle} />
             <meta property="twitter:description" content={metaDescription} />
             <meta property="twitter:image" content={metaImage} />
+            <meta property="twitter:image:alt" content={metaImageAlt} />
+            {twitterSite && <meta name="twitter:site" content={twitterSite} />}
+            {twitterCreator && <meta name="twitter:creator" content={twitterCreator} />}
 
             {/* Structured Data */}
             {schema && (

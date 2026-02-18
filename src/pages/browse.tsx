@@ -44,6 +44,9 @@ export default function Browse({ settings: initialSettings }: { settings: any })
         siteName: 'TorrentEdu',
         siteDescription: 'Download high-quality educational courses via torrent.'
     });
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const baseKeywords = 'movies, torrent, yts, yts 2, stream, watch movies, browse movies, movie torrents';
+    const seoDescription = 'Browse movies by genre, year and quality. Stream and download torrents with fast YTS-style listings.';
 
     if (error) return <div className="min-h-screen bg-[#171717] flex items-center justify-center text-white">Failed to load media</div>;
 
@@ -72,13 +75,15 @@ export default function Browse({ settings: initialSettings }: { settings: any })
         <div className="min-h-screen bg-[#171717] text-white">
             <SEO
                 title={`Browse Media - Page ${page}`}
-                description={settings.siteDescription}
+                description={seoDescription}
+                siteName={settings.siteName}
+                keywords={baseKeywords}
                 schema={{
                     "@context": "https://schema.org",
-                    "@type": "WebSite",
-                    "name": settings.siteName,
-                    "url": (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000') + '/browse',
-                    "description": settings.siteDescription
+                    "@type": "CollectionPage",
+                    "name": `Browse Media - Page ${page}`,
+                    "url": `${siteUrl}/browse`,
+                    "description": seoDescription
                 }}
             />
 

@@ -6,10 +6,16 @@ import Course from '@/models/Course';
 const BLOG_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://torrentyts.vercel.app';
 
 function generateSiteMap(courses: any[]) {
+  const now = new Date().toISOString();
   return `<?xml version="1.0" encoding="UTF-8"?>
    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
      <url>
        <loc>${BLOG_URL}</loc>
+       <lastmod>${now}</lastmod>
+     </url>
+     <url>
+       <loc>${`${BLOG_URL}/browse`}</loc>
+       <lastmod>${now}</lastmod>
      </url>
      ${courses
       .map(({ slug, updatedAt }) => {
