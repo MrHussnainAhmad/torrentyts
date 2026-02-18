@@ -74,6 +74,10 @@ export default function CoursePage({ settings: initialSettings }: { settings: an
                     }
                 }}
             />
+            <Head>
+                {course.coverImage && <link rel="preload" as="image" href={course.coverImage} />}
+                {course.thumbnail && <link rel="preload" as="image" href={course.thumbnail} />}
+            </Head>
 
             {/* Background Gradient */}
             {course.coverImage ? (
@@ -100,8 +104,10 @@ export default function CoursePage({ settings: initialSettings }: { settings: an
                                     <img
                                         src={course.thumbnail}
                                         alt={course.title}
+                                        loading="eager"
+                                        fetchPriority="high"
+                                        decoding="async"
                                         className="w-full rounded-lg shadow-2xl"
-                                        loading="lazy"
                                     />
                                 ) : (
                                     <div className="w-full aspect-[2/3] bg-[#1f1f1f] rounded-lg flex flex-col items-center justify-center text-gray-600 border border-white/5">

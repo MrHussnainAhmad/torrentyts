@@ -44,6 +44,7 @@ export default function Home({ settings: initialSettings }: { settings: any }) {
   const courses = data?.data || [];
   const latestMovies = latestData?.data || [];
   const featuredMovie = featuredData?.data?.[0];
+  const featuredImage = featuredMovie?.coverImage || featuredMovie?.thumbnail;
 
   const filteredCourses = courses.filter((course: any) => {
     const matchesSearch = course.title.toLowerCase().includes(searchQuery.toLowerCase());
@@ -52,6 +53,11 @@ export default function Home({ settings: initialSettings }: { settings: any }) {
 
   return (
     <div className="min-h-screen bg-[#171717] text-white">
+      {featuredImage && !searchQuery && (
+        <Head>
+          <link rel="preload" as="image" href={featuredImage} />
+        </Head>
+      )}
       <SEO
         title="Latest Media Torrents"
         description={settings.siteDescription}
