@@ -25,7 +25,7 @@ export default function Home({ settings: initialSettings }: { settings: any }) {
   const { data: settingsData } = useSWR('/api/settings', fetcher);
   const { data: featuredData } = useSWR('/api/courses?isFeatured=true&limit=1', fetcher);
   const { data: latestData } = useSWR('/api/courses?limit=4&sortBy=year', fetcher);
-  const { data, error } = useSWR('/api/courses?limit=15', fetcher);
+  const { data, error } = useSWR('/api/courses?limit=12', fetcher);
   const [searchQuery, setSearchQuery] = useState('');
 
   const settings = (settingsData?.success && settingsData.data) ? settingsData.data : (initialSettings || {
