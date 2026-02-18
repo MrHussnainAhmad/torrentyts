@@ -23,6 +23,7 @@ export async function getServerSideProps() {
 export default function Home({ settings: initialSettings }: { settings: any }) {
   const router = useRouter();
   const { data: settingsData } = useSWR('/api/settings', fetcher);
+  const { data: latestData } = useSWR('/api/courses?limit=4&sortBy=year', fetcher);
   const { data, error } = useSWR('/api/courses?limit=15', fetcher);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -40,6 +41,7 @@ export default function Home({ settings: initialSettings }: { settings: any }) {
   if (error) return <div className="min-h-screen bg-[#171717] flex items-center justify-center text-white">Failed to load media</div>;
 
   const courses = data?.data || [];
+  const latestMovies = latestData?.data || [];
 
   const filteredCourses = courses.filter((course: any) => {
     const matchesSearch = course.title.toLowerCase().includes(searchQuery.toLowerCase());
@@ -63,12 +65,31 @@ export default function Home({ settings: initialSettings }: { settings: any }) {
       <Navbar onSearch={setSearchQuery} />
 
       <main className="container mx-auto px-4 py-12">
+        {/* Latest Section */}
+        {latestMovies.length > 0 && !searchQuery && (
+          <div className="mb-16">
+            <div className="flex items-center justify-between mb-8 border-b border-white/5 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-8 bg-[#6AC045] rounded-full"></div>
+                <h2 className="text-2xl font-bold">Latest <span className="text-[#6AC045]">Media</span></h2>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 lg:gap-8">
+              {latestMovies.map((movie: any) => (
+                <CourseCard key={movie._id} course={movie} />
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Header Section */}
         <div className="mb-12 text-center max-w-4xl mx-auto">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">Latest <span className="text-[#6AC045]">Media</span> Torrents</h1>
+          <h1 className="text-3xl md:text-4xl font-bold mb-4">{searchQuery ? 'Search Results' : 'Latest Media Torrents'}</h1>
           <p className="text-gray-400 text-base leading-relaxed">
-            Download high-quality content in the most efficient ways possible.
-            All files are verified and safe to use.
+            {searchQuery
+              ? `Showing results for "${searchQuery}"`
+              : 'Download high-quality content in the most efficient ways possible. All files are verified and safe to use.'
+            }
           </p>
         </div>
 
