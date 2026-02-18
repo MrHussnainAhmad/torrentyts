@@ -105,13 +105,18 @@ export default function CoursePage({ settings: initialSettings }: { settings: an
             {/* Background Gradient */}
             {course.coverImage ? (
                 <div
-                    className="absolute inset-0 z-0 opacity-40 pointer-events-none"
+                    className="absolute inset-0 z-0 opacity-40 pointer-events-none blur-[6px]"
                     style={{
                         background: `linear-gradient(to bottom, transparent 0%, #171717 100%), url(${course.coverImage}) no-repeat top center/cover`
                     }}
                 />
             ) : (
-                <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#1f1f1f] to-[#171717] opacity-20 pointer-events-none" />
+                <div
+                    className="absolute inset-0 z-0 opacity-25 pointer-events-none blur-[8px]"
+                    style={{
+                        background: 'linear-gradient(135deg, #000000 0%, #1a1a1a 45%, #d9d9d9 100%)'
+                    }}
+                />
             )}
 
             <div className="relative z-10">

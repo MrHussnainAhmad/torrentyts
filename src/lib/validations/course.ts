@@ -10,7 +10,7 @@ export const courseSchema = z.object({
     year: z.coerce.number().min(1900).max(new Date().getFullYear() + 1),
     language: z.string().min(1, 'Language is required'),
     thumbnail: z.string().url('Invalid thumbnail URL'),
-    coverImage: z.string().url('Invalid cover image URL'),
+    coverImage: z.string().url('Invalid cover image URL').optional().or(z.literal('')),
     magnetLink: z.string().startsWith('magnet:?', 'Invalid magnet link format'),
     fileSize: z.string().min(1, 'File size is required'),
     seeders: z.coerce.number().min(0).default(0),
