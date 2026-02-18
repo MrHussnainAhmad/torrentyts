@@ -12,6 +12,8 @@ module.exports = {
             },
         ],
     },
-    // Generate a new sitemap every time the build runs
+    // We want the dynamic sitemap from pages/sitemap.xml.tsx to take precedence
+    // However, next-sitemap generates a static one. 
+    // We will keep this default for valid redundant coverage or static fallback.
     generateIndexSitemap: false,
 }
