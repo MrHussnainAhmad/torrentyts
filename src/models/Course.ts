@@ -17,6 +17,7 @@ export interface ICourse extends mongoose.Document {
     leechers: number;
     liveUrl: string;
     status: 'draft' | 'published';
+    isFeatured: boolean;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -88,7 +89,11 @@ const CourseSchema = new mongoose.Schema<ICourse>(
         status: {
             type: String,
             enum: ['draft', 'published'],
-            default: 'draft',
+            default: 'published',
+        },
+        isFeatured: {
+            type: Boolean,
+            default: false,
         },
     },
     { timestamps: true }

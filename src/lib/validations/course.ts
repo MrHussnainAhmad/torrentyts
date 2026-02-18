@@ -17,6 +17,7 @@ export const courseSchema = z.object({
     leechers: z.coerce.number().min(0).default(0),
     liveUrl: z.string().url('Invalid live URL').optional().or(z.literal('')),
     status: z.enum(['draft', 'published']).default('published'),
+    isFeatured: z.boolean().default(false),
 });
 
 export type CourseFormData = z.infer<typeof courseSchema>;

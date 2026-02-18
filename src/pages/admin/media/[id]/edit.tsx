@@ -46,6 +46,7 @@ export default function EditCourse() {
                 leechers: course.leechers,
                 liveUrl: course.liveUrl || '',
                 status: course.status,
+                isFeatured: course.isFeatured || false,
             });
         }
     }, [courseData, reset]);
@@ -205,6 +206,16 @@ export default function EditCourse() {
                             <option value="published">Published</option>
                         </select>
                         <ErrorMessage>{errors.status?.message}</ErrorMessage>
+                    </div>
+
+                    <div className="flex items-center gap-2 bg-dark-bg/50 p-3 rounded-lg border border-dark-border w-fit">
+                        <input
+                            type="checkbox"
+                            {...register('isFeatured')}
+                            id="isFeatured"
+                            className="w-4 h-4 rounded border-dark-border text-primary-600 focus:ring-primary-500"
+                        />
+                        <Label htmlFor="isFeatured" className="cursor-pointer">Featured Movie (Display on Home Hero)</Label>
                     </div>
 
                     <div className="flex justify-end gap-4">

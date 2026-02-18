@@ -13,7 +13,7 @@ export default async function handler(
     switch (method) {
         case 'GET':
             try {
-                const { slug, page = '1', limit = '100', sortBy, genre, year, quality } = req.query;
+                const { slug, page = '1', limit = '100', sortBy, genre, year, quality, isFeatured } = req.query;
                 const pageNum = parseInt(page as string);
                 const limitNum = parseInt(limit as string);
                 const skip = (pageNum - 1) * limitNum;
@@ -22,6 +22,7 @@ export default async function handler(
                 if (genre) query.genre = genre;
                 if (year) query.year = parseInt(year as string);
                 if (quality) query.quality = quality;
+                if (isFeatured) query.isFeatured = isFeatured === 'true';
 
                 if (slug) {
                     const course = await Course.findOne({ ...query, slug });

@@ -25,6 +25,7 @@ export default function AddCourse() {
             seeders: 0,
             leechers: 0,
             status: 'published',
+            isFeatured: false,
             genre: [],
         },
     });
@@ -200,6 +201,16 @@ export default function AddCourse() {
                         <Label htmlFor="liveUrl">Watch Link (Optional)</Label>
                         <Input id="liveUrl" {...register('liveUrl')} placeholder="e.g., https://zoom.us/j/..." />
                         <ErrorMessage>{errors.liveUrl?.message}</ErrorMessage>
+                    </div>
+
+                    <div className="flex items-center gap-2 bg-dark-bg/50 p-3 rounded-lg border border-dark-border w-fit">
+                        <input
+                            type="checkbox"
+                            {...register('isFeatured')}
+                            id="isFeatured"
+                            className="w-4 h-4 rounded border-dark-border text-primary-600 focus:ring-primary-500"
+                        />
+                        <Label htmlFor="isFeatured" className="cursor-pointer">Featured Movie (Display on Home Hero)</Label>
                     </div>
 
                     <div className="flex justify-end gap-4">
