@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { useState, useEffect } from 'react';
 import useSWR from 'swr';
+import Image from 'next/image';
 import Navbar from '@/components/client/Navbar';
 import Footer from '@/components/client/Footer';
 import CourseCard from '@/components/client/CourseCard';
@@ -69,13 +70,19 @@ export default function Home({ settings: initialSettings }: { settings: any }) {
       <main className="container mx-auto px-4 py-8">
         {/* Featured / Hero Section */}
         {featuredMovie && !searchQuery && (
-          <div className="relative mb-16 rounded-2xl overflow-hidden aspect-[21/9] min-h-[300px] group cursor-pointer border border-white/5 shadow-2xl"
+          <div className="relative mb-16 rounded-2xl overflow-hidden aspect-[21/9] min-h-[350px] group cursor-pointer border border-white/5 shadow-2xl"
             onClick={() => router.push(`/media/${featuredMovie.slug}`)}>
             {/* Background Image with Overlay */}
-            <div
-              className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-              style={{ backgroundImage: `url(${featuredMovie.coverImage || featuredMovie.thumbnail})` }}
-            />
+            <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-105">
+              <Image
+                src={(featuredMovie.coverImage || featuredMovie.thumbnail)?.replace('/w500/', '/original/')}
+                alt={featuredMovie.title}
+                fill
+                priority
+                className="object-cover"
+                sizes="100vw"
+              />
+            </div>
             <div className="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent" />
 
             {/* Content */}
