@@ -36,20 +36,42 @@ function SiteMap() {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ res }) => {
-  // Connect to database directly
-  await dbConnect();
+  try {
+    // Connect to database directly
+    await dbConnect();
 
-  // Fetch published courses directly from DB
-  const courses = await Course.find({ status: 'published' })
-    .select('slug updatedAt')
-    .lean();
+    // Fetch published courses directly from DB
+    const courses = await Course.find({ status: 'published' })
+      .select('slug updatedAt')
+      .lean();
 
-  // Generate XML sitemap
-  const sitemap = generateSiteMap(courses);
+    // Generate XML sitemap
+    const sitemap = generateSiteMap(courses);
 
-  res.setHeader('Content-Type', 'text/xml');
-  res.write(sitemap);
-  res.end();
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'text/xml');
+    res.write(sitemap);
+    res.end();
+  } catch (error) {
+    // Fallback sitemap so crawlers always get valid XML
+    const now = new Date().toISOString();
+    const fallback = `<?xml version="1.0" encoding="UTF-8"?>
+   <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+     <url>
+       <loc>${BLOG_URL}</loc>
+       <lastmod>${now}</lastmod>
+     </url>
+     <url>
+       <loc>${`${BLOG_URL}/browse`}</loc>
+       <lastmod>${now}</lastmod>
+     </url>
+   </urlset>
+ `;
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'text/xml');
+    res.write(fallback);
+    res.end();
+  }
 
   return {
     props: {},
