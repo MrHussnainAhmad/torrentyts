@@ -69,6 +69,9 @@ export default function CoursePage({ settings: initialSettings }: { settings: an
     const keywords = Array.from(new Set(keywordParts)).join(', ');
     const metaImage = course.coverImage || course.thumbnail;
 
+    const magnetLinks = Array.isArray(course.magnetLinks) ? course.magnetLinks : [];
+    const hasMultipleMagnets = magnetLinks.length > 0;
+
     return (
         <div className="min-h-screen bg-[#171717] text-white relative">
             <SEO
@@ -149,14 +152,31 @@ export default function CoursePage({ settings: initialSettings }: { settings: an
                                     </div>
                                 )}
 
-                                {/* Download Button */}
-                                <button
-                                    onClick={copyToClipboard}
-                                    className="w-full mt-6 bg-[#6AC045] hover:bg-[#5eb03a] text-white py-4 rounded-lg font-bold text-lg flex items-center justify-center gap-2 transition-colors shadow-lg"
-                                >
-                                    <Download className="w-5 h-5" />
-                                    {copyStatus || 'Copy Magnet Link'}
-                                </button>
+                                {/* Download Buttons */}
+                                {!hasMultipleMagnets ? (
+                                    <button
+                                        onClick={copyToClipboard}
+                                        className="w-full mt-6 bg-[#6AC045] hover:bg-[#5eb03a] text-white py-4 rounded-lg font-bold text-lg flex items-center justify-center gap-2 transition-colors shadow-lg"
+                                    >
+                                        <Download className="w-5 h-5" />
+                                        {copyStatus || 'Copy Magnet Link'}
+                                    </button>
+                                ) : (
+                                    <div className="mt-6 space-y-2">
+                                        {magnetLinks.map((link: any, index: number) => (
+                                            <a
+                                                key={`${link.title || 'episode'}-${index}`}
+                                                href={link.magnetLink}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="w-full bg-[#6AC045] hover:bg-[#5eb03a] text-white py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition-colors shadow-lg"
+                                            >
+                                                <Download className="w-4 h-4" />
+                                                {link.title || `Episode ${index + 1}`}
+                                            </a>
+                                        ))}
+                                    </div>
+                                )}
 
                                 {/* Watch Now Button */}
                                 {course.liveUrl && (

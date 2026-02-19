@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
@@ -13,6 +13,7 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 export default function EditCourse() {
     const router = useRouter();
     const { id } = router.query;
+    const [useMultipleMagnets, setUseMultipleMagnets] = useState(false);
 
     const { data: courseData, error } = useSWR(id ? `/api/courses/${id}` : null, fetcher);
 
@@ -21,14 +22,22 @@ export default function EditCourse() {
         handleSubmit,
         setValue,
         reset,
+        control,
         formState: { errors, isSubmitting },
     } = useForm<CourseFormData>({
         resolver: zodResolver(courseSchema) as any,
     });
 
+    const { fields: magnetFields, append, remove } = useFieldArray({
+        control,
+        name: 'magnetLinks',
+    });
+
     useEffect(() => {
         if (courseData && courseData.success) {
             const course = courseData.data;
+            const hasMultiple = Array.isArray(course.magnetLinks) && course.magnetLinks.length > 0;
+            setUseMultipleMagnets(hasMultiple);
             reset({
                 title: course.title,
                 slug: course.slug,
@@ -41,6 +50,7 @@ export default function EditCourse() {
                 thumbnail: course.thumbnail,
                 coverImage: course.coverImage,
                 magnetLink: course.magnetLink,
+                magnetLinks: course.magnetLinks || [],
                 fileSize: course.fileSize,
                 seeders: course.seeders,
                 leechers: course.leechers,
@@ -52,6 +62,11 @@ export default function EditCourse() {
     }, [courseData, reset]);
 
     const onSubmit = async (data: CourseFormData) => {
+        if (useMultipleMagnets) {
+            data.magnetLink = undefined;
+        } else {
+            data.magnetLinks = [];
+        }
         try {
             const res = await fetch(`/api/courses/${id}`, {
                 method: 'PUT',
@@ -185,8 +200,62 @@ export default function EditCourse() {
 
                     <div className="space-y-2">
                         <Label htmlFor="magnetLink">Magnet Link</Label>
-                        <Textarea id="magnetLink" {...register('magnetLink')} className="font-mono text-xs" />
-                        <ErrorMessage>{errors.magnetLink?.message}</ErrorMessage>
+                        <div className="flex items-center gap-2">
+                            <input
+                                type="checkbox"
+                                id="multiMagnets"
+                                checked={useMultipleMagnets}
+                                onChange={(e) => {
+                                    const checked = e.target.checked;
+                                    setUseMultipleMagnets(checked);
+                                    if (checked && magnetFields.length === 0) {
+                                        append({ title: '', magnetLink: '' });
+                                    }
+                                    if (!checked) {
+                                        setValue('magnetLinks', []);
+                                    }
+                                }}
+                                className="w-4 h-4 rounded border-dark-border text-primary-600 focus:ring-primary-500"
+                            />
+                            <Label htmlFor="multiMagnets" className="cursor-pointer">
+                                Multiple Magnet Links (Series/Episodes)
+                            </Label>
+                        </div>
+                        {!useMultipleMagnets && (
+                            <>
+                                <Textarea id="magnetLink" {...register('magnetLink')} className="font-mono text-xs" />
+                                <ErrorMessage>{errors.magnetLink?.message}</ErrorMessage>
+                            </>
+                        )}
+                        {useMultipleMagnets && (
+                            <div className="space-y-3">
+                                {magnetFields.map((field, index) => (
+                                    <div key={field.id} className="grid grid-cols-1 md:grid-cols-[1fr_2fr_auto] gap-2 items-start">
+                                        <div className="space-y-1">
+                                            <Input
+                                                placeholder="Episode title"
+                                                {...register(`magnetLinks.${index}.title` as const)}
+                                            />
+                                            <ErrorMessage>{errors.magnetLinks?.[index]?.title?.message as any}</ErrorMessage>
+                                        </div>
+                                        <div className="space-y-1">
+                                            <Input
+                                                placeholder="magnet:?xt=urn:btih:..."
+                                                {...register(`magnetLinks.${index}.magnetLink` as const)}
+                                            />
+                                            <ErrorMessage>{errors.magnetLinks?.[index]?.magnetLink?.message as any}</ErrorMessage>
+                                        </div>
+                                        <Button type="button" variant="outline" onClick={() => remove(index)}>
+                                            Remove
+                                        </Button>
+                                    </div>
+                                ))}
+                                <Button type="button" variant="outline" onClick={() => append({ title: '', magnetLink: '' })}>
+                                    Add Episode
+                                </Button>
+                                <ErrorMessage>{errors.magnetLinks?.message as any}</ErrorMessage>
+                            </div>
+                        )}
                     </div>
 
                     <div className="space-y-2">

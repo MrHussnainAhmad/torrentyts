@@ -11,7 +11,8 @@ export interface ICourse extends mongoose.Document {
     language: string;
     thumbnail: string;
     coverImage: string;
-    magnetLink: string;
+    magnetLink?: string;
+    magnetLinks?: { title: string; magnetLink: string }[];
     fileSize: string;
     seeders: number;
     leechers: number;
@@ -68,8 +69,14 @@ const CourseSchema = new mongoose.Schema<ICourse>(
         },
         magnetLink: {
             type: String,
-            required: [true, 'Please provide a magnet link.'],
+            required: false,
         },
+        magnetLinks: [
+            {
+                title: { type: String, required: true },
+                magnetLink: { type: String, required: true },
+            },
+        ],
         fileSize: {
             type: String,
             required: [true, 'Please provide the file size.'],

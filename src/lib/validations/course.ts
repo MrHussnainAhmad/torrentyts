@@ -14,13 +14,32 @@ export const courseSchema = z.object({
         (value) => (typeof value === 'string' && value.trim() === '' ? undefined : value),
         z.string().url('Invalid cover image URL').optional()
     ),
-    magnetLink: z.string().startsWith('magnet:?', 'Invalid magnet link format'),
+    magnetLink: z.preprocess(
+        (value) => (typeof value === 'string' && value.trim() === '' ? undefined : value),
+        z.string().startsWith('magnet:?', 'Invalid magnet link format').optional()
+    ),
+    magnetLinks: z
+        .array(
+            z.object({
+                title: z.string().min(1, 'Magnet title is required'),
+                magnetLink: z.string().startsWith('magnet:?', 'Invalid magnet link format'),
+            })
+        )
+        .optional(),
     fileSize: z.string().min(1, 'File size is required'),
     seeders: z.coerce.number().min(0).default(0),
     leechers: z.coerce.number().min(0).default(0),
     liveUrl: z.string().url('Invalid live URL').optional().or(z.literal('')),
     status: z.enum(['draft', 'published']).default('published'),
     isFeatured: z.boolean().default(false),
+}).superRefine((data, ctx) => {
+    const hasSingle = !!data.magnetLink;
+    const hasMultiple = Array.isArray(data.magnetLinks) && data.magnetLinks.length > 0;
+    if (!hasSingle && !hasMultiple) {
+        const message = 'Provide a magnet link or add at least one episode link';
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message, path: ['magnetLink'] });
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message, path: ['magnetLinks'] });
+    }
 });
 
 export type CourseFormData = z.infer<typeof courseSchema>;
