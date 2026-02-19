@@ -106,26 +106,28 @@ export default function CoursePage({ settings: initialSettings }: { settings: an
             </Head>
 
             {/* Background Gradient */}
-            {course.coverImage ? (
-                <>
-                    <img
-                        src={course.coverImage}
-                        alt={`${course.title} cover`}
-                        className="absolute inset-0 z-0 h-full w-full object-cover object-center opacity-40 blur-[6px] scale-105 pointer-events-none"
-                        loading="eager"
-                        fetchPriority="high"
-                        decoding="async"
+            <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+                {course.coverImage ? (
+                    <>
+                        <img
+                            src={course.coverImage}
+                            alt={`${course.title} cover`}
+                            className="absolute inset-0 h-full w-full object-cover object-center opacity-40 blur-[6px] scale-105"
+                            loading="eager"
+                            fetchPriority="high"
+                            decoding="async"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#171717]" />
+                    </>
+                ) : (
+                    <div
+                        className="absolute inset-0 opacity-25 blur-[8px]"
+                        style={{
+                            background: 'linear-gradient(135deg, #000000 0%, #1a1a1a 45%, #d9d9d9 100%)'
+                        }}
                     />
-                    <div className="absolute inset-0 z-0 pointer-events-none bg-gradient-to-b from-transparent to-[#171717]" />
-                </>
-            ) : (
-                <div
-                    className="absolute inset-0 z-0 opacity-25 pointer-events-none blur-[8px]"
-                    style={{
-                        background: 'linear-gradient(135deg, #000000 0%, #1a1a1a 45%, #d9d9d9 100%)'
-                    }}
-                />
-            )}
+                )}
+            </div>
 
             <div className="relative z-10">
                 <Navbar onSearch={() => { }} />
