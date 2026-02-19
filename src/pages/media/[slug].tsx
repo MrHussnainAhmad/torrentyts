@@ -73,7 +73,7 @@ export default function CoursePage({ settings: initialSettings }: { settings: an
     const hasMultipleMagnets = magnetLinks.length > 0;
 
     return (
-        <div className="min-h-screen bg-[#171717] text-white relative">
+        <div className="min-h-screen bg-[#171717] text-white relative overflow-x-hidden">
             <SEO
                 title={`${course.title} (${course.year})`}
                 description={metaDescription}
